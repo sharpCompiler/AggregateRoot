@@ -11,7 +11,7 @@ public class RideMatchingService
 		if (pickupLocation.State != driver.ActiveShift.WorkingState)
 			throw new InvalidOperationException("Driver and customer must be in the same state");
 
-		var ride = new Ride(customer.Id, driver.Id, DateTime.Now, pickupLocation, dropoffLocation);
+		var ride = new Ride(customer.Id, driver.Id, pickupLocation, dropoffLocation);
 		return ride;
 	}
 }

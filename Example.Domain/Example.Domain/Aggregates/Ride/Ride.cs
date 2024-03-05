@@ -7,20 +7,19 @@ namespace Example.Domain.Aggregates.Ride
         public Guid Id { get; private set; }
         public Guid CustomerId { get; private set; }
         public Guid DriverId { get; private set; }
-        public Address From { get; private set; }
-        public Address To { get; private set; }
-        public DateTime StartTime { get; private set; }
-        public DateTime? EndTime { get; private set; }
+        public Address PickUpLocation { get; private set; }
+        public Address DropoffLocation { get; private set; }
+        public DateTime? CustomerPickedUpTime { get; private set; }
+        public DateTime? CustomerDroppedOffTime { get; private set; }
         public bool IsCancelled { get; private set; }
 
-        public Ride(Guid customerId, Guid driverId, DateTime startTime, Address From, Address To)
+        public Ride(Guid customerId, Guid driverId, Address pickUpLocation, Address dropoffLocation)
         {
             Id = Guid.NewGuid();
             CustomerId = customerId;
             DriverId = driverId;
-            StartTime = startTime;
-            this.From = From;
-            this.To = To;
+			PickUpLocation = pickUpLocation;
+			DropoffLocation = dropoffLocation;
             IsCancelled = false;
         }
 
@@ -28,20 +27,32 @@ namespace Example.Domain.Aggregates.Ride
         {
             if (IsCancelled)
                 throw new InvalidOperationException("Ride is already canceled.");
-            if (EndTime.HasValue)
-                throw new InvalidOperationException("Ride has already ended.");
+
+            if (CustomerPickedUpTime.HasValue)
+                throw new InvalidOperationException("Ride has already started and can not be picked up.");
 
             IsCancelled = true;
         }
 
-        public void EndRide()
+		public void CustomerPicedUp()
+		{
+			if (CustomerPickedUpTime.HasValue)
+				throw new InvalidOperationException("Customer already picked up.");
+
+			if (IsCancelled)
+				throw new InvalidOperationException("Ride is canceled and customer will not be picked up.");
+
+			CustomerPickedUpTime = DateTime.Now;
+		}
+
+		public void CustomerDroppedOff()
         {
-            if (EndTime.HasValue)
-                throw new InvalidOperationException("Ride has already ended.");
+            if (CustomerDroppedOffTime.HasValue)
+                throw new InvalidOperationException("Customer has already been dropped off.");
             if (IsCancelled)
                 throw new InvalidOperationException("Ride is canceled and cannot be ended.");
 
-            EndTime = DateTime.UtcNow;
+			CustomerDroppedOffTime = DateTime.Now;
         }
     }
 
