@@ -8,7 +8,7 @@ namespace Example.Domain.Aggregates.Driver
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public Shift? ActiveShift { get; private set; }
-        public List<Car> Cars { get; private set; } = new List<Car>();
+        public List<Car> Cars { get; private set; } = new();
 
 
         public Driver(Guid id, string name)

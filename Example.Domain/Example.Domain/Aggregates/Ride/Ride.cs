@@ -31,10 +31,13 @@ namespace Example.Domain.Aggregates.Ride
             if (CustomerPickedUpTime.HasValue)
                 throw new InvalidOperationException("Ride has already started and can not be picked up.");
 
-            IsCancelled = true;
+			if (CustomerDroppedOffTime.HasValue)
+				throw new InvalidOperationException("Ride is complete and therefore can not be canceled.");
+
+			IsCancelled = true;
         }
 
-		public void CustomerPicedUp()
+		public void PicedUpCustomer()
 		{
 			if (CustomerPickedUpTime.HasValue)
 				throw new InvalidOperationException("Customer already picked up.");
@@ -45,7 +48,7 @@ namespace Example.Domain.Aggregates.Ride
 			CustomerPickedUpTime = DateTime.Now;
 		}
 
-		public void CustomerDroppedOff()
+		public void DroppedOffCustomer()
         {
             if (CustomerDroppedOffTime.HasValue)
                 throw new InvalidOperationException("Customer has already been dropped off.");
